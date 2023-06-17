@@ -10,7 +10,7 @@ env:
   IMAGE: us-docker.pkg.dev/lead-docket-connector/docker-1/vineskills-fb:${{ github.ref_name }}
 
   SERVICE: vineskills-fb-${{ github.ref_name }}
-  PUBLIC_URL: https://vineskills-fb-${{ github.ref_name }}-lx3iji7qaq-uc.a.run.app
+  PUBLIC_URL: https://vineskills-fb-${{ github.ref_name }}-6uimg4nysa-uc.a.run.app
 
   REGION: us-central1
   GCP_SA: integration-1@lead-docket-connector.iam.gserviceaccount.com
