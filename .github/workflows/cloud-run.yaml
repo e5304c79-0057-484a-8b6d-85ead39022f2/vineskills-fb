@@ -49,8 +49,3 @@ jobs:
           --timeout=3500
           --set-env-vars=PUBLIC_URL=${{ env.PUBLIC_URL }}
           --allow-unauthenticated
-
-      - run: >-
-          gcloud run services add-iam-policy-binding ${{ env.SERVICE }}
-          --member="allUsers"
-          --role="roles/run.invoker"
