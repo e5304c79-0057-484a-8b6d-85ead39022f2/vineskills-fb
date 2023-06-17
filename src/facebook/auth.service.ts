@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { setSecret } from '../secret-manager.service';
+import { getSecret, setSecret } from '../secret-manager.service';
 import { API_VERSION, FB_CLIENT_ID } from './facebook.const';
 
 export const AUTH_ROUTE = '/auth';
@@ -25,6 +25,8 @@ export const authenticate = async (code: string) => {
         expires_in: number;
     };
 
+    const clientSecret = await getSecret('FB_CLIENT_SECRET');
+
     const accessToken = await axios
         .request<AccessTokenResponse>({
             method: 'GET',
@@ -32,7 +34,7 @@ export const authenticate = async (code: string) => {
             params: {
                 code,
                 client_id: FB_CLIENT_ID,
-                client_secret: process.env.FB_CLIENT_SECRET,
+                client_secret: clientSecret,
                 redirect_uri: REDIRECT_URI,
             },
         })
