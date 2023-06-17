@@ -6,7 +6,7 @@ import { API_VERSION, FB_CLIENT_ID } from './facebook.const';
 export const AUTH_ROUTE = '/auth';
 export const AUTH_CALLBACK_ROUTE = `/auth/callback`;
 
-const REDIRECT_URI = process.env.PUBLIC_URL || '' + AUTH_CALLBACK_ROUTE;
+const REDIRECT_URI = (process.env.PUBLIC_URL || '') + AUTH_CALLBACK_ROUTE;
 
 export const getAuthUrl = () => {
     const url = new URL(`https://www.facebook.com/${API_VERSION}/dialog/oauth`);
