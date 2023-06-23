@@ -13,7 +13,10 @@ export const getAuthUrl = () => {
     url.searchParams.append('response_type', 'code');
     url.searchParams.append('client_id', FB_CLIENT_ID);
     url.searchParams.append('redirect_uri', REDIRECT_URI);
-    url.searchParams.append('scope', ['ads_read', 'ads_management', 'read_insights'].join(','));
+    url.searchParams.append(
+        'scope',
+        ['read_insights', 'ads_management', 'ads_read', 'business_management'].join(','),
+    );
 
     return url.toString();
 };
