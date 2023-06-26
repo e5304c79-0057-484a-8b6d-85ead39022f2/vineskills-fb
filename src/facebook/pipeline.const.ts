@@ -13,10 +13,10 @@ const actionBreakdownSchema = Joi.array()
     .items({ action_type: Joi.string(), value: Joi.number() })
     .optional();
 
-export const CAMPAIGN_INSIGHTS: Pipeline = {
-    name: 'CampaignInsights',
+export const ADSET_INSIGHTS: Pipeline = {
+    name: 'AdSetInsights',
     insightsConfig: {
-        level: 'campaign',
+        level: 'adset',
         fields: [
             'date_start',
             'date_stop',
@@ -24,6 +24,8 @@ export const CAMPAIGN_INSIGHTS: Pipeline = {
             'account_name',
             'campaign_id',
             'campaign_name',
+            'adset_id',
+            'adset_name',
             'action_values',
             'actions',
             'conversion_values',
@@ -41,6 +43,8 @@ export const CAMPAIGN_INSIGHTS: Pipeline = {
         account_name: Joi.string(),
         campaign_id: Joi.number().unsafe(),
         campaign_name: Joi.string(),
+        adset_id: Joi.number().unsafe(),
+        adset_name: Joi.string(),
         action_values: actionBreakdownSchema.optional(),
         actions: actionBreakdownSchema.optional(),
         conversion_values: actionBreakdownSchema.optional(),
@@ -57,6 +61,8 @@ export const CAMPAIGN_INSIGHTS: Pipeline = {
         { name: 'account_name', type: 'STRING' },
         { name: 'campaign_id', type: 'NUMERIC' },
         { name: 'campaign_name', type: 'STRING' },
+        { name: 'adset_id', type: 'NUMERIC' },
+        { name: 'adset_name', type: 'STRING' },
         {
             name: 'action_values',
             type: 'RECORD',
