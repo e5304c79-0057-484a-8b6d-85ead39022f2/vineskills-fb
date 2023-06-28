@@ -2,7 +2,7 @@ import { BigQuery } from '@google-cloud/bigquery';
 
 const client = new BigQuery();
 
-const DATASET = 'Facebook';
+const DATASET = 'Rosen_V2';
 
 type CreateLoadStreamOptions = {
     table: string;
