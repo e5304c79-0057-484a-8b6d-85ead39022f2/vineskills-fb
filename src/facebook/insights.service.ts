@@ -73,26 +73,21 @@ export const get = async (options: ReportOptions, config: InsightsConfig): Promi
     const getInsights = (reportId: string): Readable => {
         const stream = new Readable({ objectMode: true, read: () => {} });
 
-        const _getInsights = async (after?: string) => {
-            try {
-                const data = await client
-                    .request<InsightsResponse>({
-                        method: 'GET',
-                        url: `/${reportId}/insights`,
-                        params: { after, limit: 500 },
-                    })
-                    .then((res) => res.data);
-
-                data.data.forEach((row) => stream.push(row));
-
-                if (data.paging.next) {
-                    _getInsights(data.paging.cursors.after);
-                } else {
-                    stream.push(null);
-                }
-            } catch (error) {
-                stream.emit('error', error);
-            }
+        const _getInsights = (after?: string) => {
+            client
+                .request<InsightsResponse>({
+                    method: 'GET',
+                    url: `/${reportId}/insights`,
+                    params: { after, limit: 500 },
+                })
+                .then((res) => res.data)
+                .then((data) => {
+                    data.data.forEach((row) => stream.push(row));
+                    data.paging.next ? _getInsights(data.paging.cursors.after) : stream.push(null);
+                })
+                .catch((error) => {
+                    stream.emit('error', error);
+                });
         };
 
         _getInsights();
@@ -103,12 +98,12 @@ export const get = async (options: ReportOptions, config: InsightsConfig): Promi
     return requestReport()
         .then(pollReport)
         .then(getInsights)
-        .catch((err) => {
-            if (axios.isAxiosError(err)) {
-                console.log(JSON.stringify(err.response?.data));
+        .catch((error) => {
+            if (axios.isAxiosError(error)) {
+                console.log(JSON.stringify(error.response?.data));
             } else {
-                console.log(err);
+                console.log(error);
             }
-            return Promise.reject(err);
+            return Promise.reject(error);
         });
 };
