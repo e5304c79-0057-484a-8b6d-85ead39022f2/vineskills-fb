@@ -201,3 +201,42 @@ export const ADSET_HOURLY_INSIGHTS: Pipeline = {
         { name: 'spend', type: 'NUMERIC' },
     ],
 };
+
+export const CAMPAIGNS_PLATFORM_INSIGHTS: Pipeline = {
+    name: 'CampaignPlatformInsights',
+    insightsConfig: {
+        level: 'campaign',
+        breakdowns: 'publisher_platform,platform_position',
+        fields: [
+            'date_start',
+            'date_stop',
+            'account_id',
+            'account_name',
+            'campaign_id',
+            'campaign_name',
+            'spend',
+        ],
+    },
+    validationSchema: Joi.object({
+        date_start: Joi.string(),
+        date_stop: Joi.string(),
+        account_id: Joi.number().unsafe(),
+        account_name: Joi.string(),
+        publisher_platform: Joi.string(),
+        platform_position: Joi.string(),
+        campaign_id: Joi.number().unsafe(),
+        campaign_name: Joi.string(),
+        spend: Joi.number().optional(),
+    }),
+    schema: [
+        { name: 'date_start', type: 'DATE' },
+        { name: 'date_stop', type: 'DATE' },
+        { name: 'account_id', type: 'NUMERIC' },
+        { name: 'account_name', type: 'STRING' },
+        { name: 'publisher_platform', type: 'STRING' },
+        { name: 'platform_position', type: 'STRING' },
+        { name: 'campaign_id', type: 'NUMERIC' },
+        { name: 'campaign_name', type: 'STRING' },
+        { name: 'spend', type: 'NUMERIC' },
+    ],
+};
