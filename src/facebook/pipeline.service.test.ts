@@ -1,4 +1,4 @@
-import { ADSET_INSIGHTS } from './pipeline.const';
+import { CAMPAIGNS_PLATFORM_INSIGHTS } from './pipeline.const';
 import { createPipelineTasks, runPipeline } from './pipeline.service';
 
 it('pipeline', async () => {
@@ -8,7 +8,7 @@ it('pipeline', async () => {
             start: '2023-06-01',
             end: '2023-07-01',
         },
-        ADSET_INSIGHTS,
+        CAMPAIGNS_PLATFORM_INSIGHTS,
     )
         .then((results) => expect(results).toBeDefined())
         .catch((error) => {
