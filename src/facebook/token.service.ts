@@ -4,7 +4,7 @@ import { logger } from '../logging.service';
 import { createSecretRepository } from '../secret-manager.service';
 import { API_VERSION, FB_CLIENT_ID } from './facebook.const';
 
-const tokenRepository = createSecretRepository('FB_ACCESS_TOKEN');
+export const tokenRepository = createSecretRepository('FB_ACCESS_TOKEN');
 const fbClientSecretRepository = createSecretRepository('FB_CLIENT_SECRET');
 
 const redirectURI = 'https://oauth.pstmn.io/v1/browser-callback';
