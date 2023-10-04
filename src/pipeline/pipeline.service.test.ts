@@ -10,18 +10,18 @@ it('pipeline', async () => {
         .then((results) => expect(results).toBeDefined())
         .catch((error) => {
             console.error({ error });
-            return Promise.reject(error);
+            throw error;
         });
 });
 
 it('create-tasks', async () => {
     return createInsightsPipelineTasks({
-        start: '2023-05-01',
-        end: '2023-06-01',
+        start: '2023-08-01',
+        end: '2023-09-01',
     })
         .then((result) => expect(result).toBeDefined())
         .catch((error) => {
             console.error({ error });
-            return Promise.reject(error);
+            throw error;
         });
 });

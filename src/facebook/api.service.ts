@@ -11,6 +11,7 @@ export const getClient = async () => {
     const client = axios.create({
         baseURL: `https://graph.facebook.com/${API_VERSION}`,
         params: { access_token: token },
+        paramsSerializer: { indexes: null },
     });
 
     client.interceptors.response.use(
