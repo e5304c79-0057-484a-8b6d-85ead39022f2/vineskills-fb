@@ -48,14 +48,14 @@ const getAccessToken = async (code: string) => {
 };
 
 export const refreshToken = async () => {
+    logger.info({ fn: 'refreshToken' });
+
     const existingAccessToken = await tokenRepository.get();
-    logger.info({ existingAccessToken });
 
     const code = await getClientCode(existingAccessToken);
-    logger.info({ code });
 
     const accessToken = await getAccessToken(code);
-    logger.info({ accessToken });
+
     await tokenRepository.set(accessToken);
 
     return accessToken;
