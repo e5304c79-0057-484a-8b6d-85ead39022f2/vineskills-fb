@@ -1,5 +1,6 @@
 import { Readable } from 'node:stream';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import qs from 'query-string';
 
 import { logger } from '../logging.service';
 import { API_VERSION } from './facebook.const';
@@ -11,7 +12,7 @@ export const getClient = async () => {
     const client = axios.create({
         baseURL: `https://graph.facebook.com/${API_VERSION}`,
         params: { access_token: token },
-        paramsSerializer: { indexes: null },
+        paramsSerializer: { serialize: (value) => qs.stringify(value, { arrayFormat: 'comma' }) },
     });
 
     client.interceptors.response.use(
