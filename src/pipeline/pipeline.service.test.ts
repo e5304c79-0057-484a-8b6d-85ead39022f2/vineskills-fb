@@ -1,15 +1,12 @@
 import { CAMPAIGNS_PLATFORM_INSIGHTS } from './pipeline.const';
-import { createPipelineTasks, runPipeline } from './pipeline.service';
+import { createInsightsPipelineTasks, runPipeline } from './pipeline.service';
 
 it('pipeline', async () => {
-    return runPipeline(
-        {
-            accountId: '501728803750343',
-            start: '2023-06-01',
-            end: '2023-07-01',
-        },
-        CAMPAIGNS_PLATFORM_INSIGHTS,
-    )
+    return runPipeline(CAMPAIGNS_PLATFORM_INSIGHTS, {
+        accountId: '501728803750343',
+        start: '2023-06-01',
+        end: '2023-06-05',
+    })
         .then((results) => expect(results).toBeDefined())
         .catch((error) => {
             console.error({ error });
@@ -18,7 +15,7 @@ it('pipeline', async () => {
 });
 
 it('create-tasks', async () => {
-    return createPipelineTasks({
+    return createInsightsPipelineTasks({
         start: '2023-05-01',
         end: '2023-06-01',
     })

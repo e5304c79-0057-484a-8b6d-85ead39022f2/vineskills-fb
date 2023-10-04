@@ -1,99 +1,55 @@
 import express from 'express';
-import Joi from 'joi';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import { http } from '@google-cloud/functions-framework';
 
-dayjs.extend(utc);
-
-import * as LoggingService from './logging/logging.service';
-import { AUTH_ROUTE, AUTH_CALLBACK_ROUTE, authenticate, getAuthUrl } from './facebook/auth.service';
-import * as pipelines from './facebook/pipeline.const';
-import { runPipeline, createPipelineTasks } from './facebook/pipeline.service';
+import { logger } from './logging.service';
+import {
+    CreatePipelineTasksBodySchema,
+    RunPipelineBodySchema,
+} from './pipeline/pipeline.request.dto';
+import * as pipelines from './pipeline/pipeline.const';
+import { runPipeline, createInsightsPipelineTasks } from './pipeline/pipeline.service';
 
 const app = express();
 
-app.use(express.json());
-
-app.use(({ params, path, body }, _, next) => {
-    LoggingService.info({ path, params, body });
+app.use(({ headers, path, body }, _, next) => {
+    logger.info({ headers, path, body });
     next();
 });
 
-app.get(AUTH_CALLBACK_ROUTE, (req, res) => {
-    authenticate(req.query.code as string)
-        .then((result) => res.status(200).json({ result }))
-        .catch((error) => res.status(500).json({ error }));
-});
-
-app.get(AUTH_ROUTE, (_, res) => {
-    res.redirect(getAuthUrl());
-});
-
-type CreatePipelineTasksBody = {
-    start: string;
-    end: string;
-};
-
-app.use('/task', (req, res) => {
-    Joi.object<CreatePipelineTasksBody>({
-        start: Joi.string()
-            .optional()
-            .empty(null)
-            .allow(null)
-            .default(dayjs.utc().subtract(7, 'day').format('YYYY-MM-DD')),
-        end: Joi.string()
-            .optional()
-            .empty(null)
-            .allow(null)
-            .default(dayjs.utc().format('YYYY-MM-DD')),
-    })
-        .validateAsync(req.body)
-        .then((body) =>
-            createPipelineTasks(body)
-                .then((result) => {
-                    res.status(200).json({ result });
-                })
+app.use('/task', ({ body }, res) => {
+    CreatePipelineTasksBodySchema.validateAsync(body)
+        .then((value) => {
+            createInsightsPipelineTasks(value)
+                .then((result) => res.status(200).json({ result }))
                 .catch((error) => {
-                    console.error(JSON.stringify(error));
-                    res.status(500).json({ error });
-                }),
-        )
-        .catch((error) => {
-            console.error(JSON.stringify(error));
-            res.status(500).json({ error });
-        });
-});
-
-type RunPipelineBody = {
-    accountId: string;
-    start: string;
-    end: string;
-    pipeline: keyof typeof pipelines;
-};
-
-app.use('/', (req, res) => {
-    Joi.object<RunPipelineBody>({
-        accountId: Joi.string(),
-        start: Joi.string(),
-        end: Joi.string(),
-        pipeline: Joi.string(),
-    })
-        .validateAsync(req.body)
-        .then(async ({ pipeline, accountId, start, end }) => {
-            return runPipeline({ accountId, start, end }, pipelines[pipeline])
-                .then((result) => {
-                    res.status(200).json({ result });
-                })
-                .catch((error) => {
-                    console.error(JSON.stringify(error));
+                    logger.error({ error });
                     res.status(500).json({ error });
                 });
         })
-
         .catch((error) => {
-            console.error(JSON.stringify(error));
-            res.status(500).json({ error });
+            logger.warn({ error });
+            res.status(400).json({ error });
         });
 });
 
-app.listen(8080);
+app.use('/', ({ body }, res) => {
+    RunPipelineBodySchema.validateAsync(body)
+        .then((value) => {
+            runPipeline(pipelines[value.pipeline], {
+                accountId: value.accountId,
+                start: value.start,
+                end: value.end,
+            })
+                .then((result) => res.status(200).json({ result }))
+                .catch((error) => {
+                    logger.error({ error });
+                    res.status(500).json({ error });
+                });
+        })
+        .catch((error) => {
+            logger.warn({ error });
+            res.status(400).json({ error });
+        });
+});
+
+http('main', app);
