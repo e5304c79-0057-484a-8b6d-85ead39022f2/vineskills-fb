@@ -3,14 +3,17 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import qs from 'query-string';
 
 import { logger } from '../logging.service';
-import { API_VERSION } from './facebook.const';
-import { tokenRepository } from './token.service';
+import { createSecretRepository } from '../secret-manager.service';
+
+export const tokenRepository = createSecretRepository('FB_ACCESS_TOKEN');
 
 export const getClient = async () => {
     const token = await tokenRepository.get();
 
+    const apiVersion = 'v19.0';
+
     const client = axios.create({
-        baseURL: `https://graph.facebook.com/${API_VERSION}`,
+        baseURL: `https://graph.facebook.com/${apiVersion}`,
         params: { access_token: token },
         paramsSerializer: { serialize: (value) => qs.stringify(value, { arrayFormat: 'comma' }) },
     });
