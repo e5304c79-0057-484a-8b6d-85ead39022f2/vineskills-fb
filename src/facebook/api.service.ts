@@ -10,7 +10,7 @@ export const tokenRepository = createSecretRepository('FB_ACCESS_TOKEN');
 export const getClient = async () => {
     const token = await tokenRepository.get();
 
-    const apiVersion = 'v19.0';
+    const apiVersion = 'v21.0';
 
     const client = axios.create({
         baseURL: `https://graph.facebook.com/${apiVersion}`,
